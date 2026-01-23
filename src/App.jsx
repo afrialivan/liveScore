@@ -7,7 +7,7 @@ const App = () => {
   const [loading, setLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState(new Date());
 
-  const API_URL = "https://script.google.com/macros/s/AKfycbxHFf3L1NgDqPhUv3Qpt6O-29GFxOXiJZf0HZBITp6mkNhdHlgox5av4qaRR6tzAbM/exec";
+  const API_URL = "https://script.google.com/macros/s/AKfycbwGIGI9ULRgrOG8bkNSu_G_0o5Lco5oc_p_JmkGXHxC5G6y0gB_zsrdODE0Krgk-TGE/exec";
 
   // Kita bungkus fungsi fetch dalam useCallback agar bisa dipanggil berulang kali
   const fetchLeaderboard = useCallback(async () => {
@@ -56,17 +56,19 @@ const App = () => {
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead style={{ background: '#f3f4f6' }}>
               <tr>
-                <th style={{ padding: '15px', textAlign: 'left' }}>Peringkat</th>
-                <th style={{ padding: '15px', textAlign: 'left' }}>Nama</th>
-                <th style={{ padding: '15px', textAlign: 'right' }}>Skor</th>
+                <th className='w-32 text-center' style={{ padding: '15px', textAlign: 'left' }}>Peringkat</th>
+                <th className='w-52'style={{ padding: '15px', textAlign: 'left' }}>Nama</th>
+                <th className='w-32'style={{ padding: '15px', textAlign: 'left' }}>Sekolah</th>
+                <th className='w-32 pr-10'style={{ textAlign: 'right' }}>Skor</th>
               </tr>
             </thead>
             <tbody>
               {data.map((player, index) => (
                 <tr key={index} style={{ borderBottom: '1px solid #eee' }}>
-                  <td style={{ padding: '12px 15px', fontWeight: 'bold' }}>{index + 1}</td>
+                  <td className='pl-10' style={{ fontWeight: 'bold' }}>{index + 1}</td>
                   <td style={{ padding: '12px 15px' }}>{player.nama}</td>
-                  <td style={{ padding: '12px 15px', textAlign: 'right', color: '#e67e22', fontWeight: 'bold' }}>
+                  <td style={{ padding: '12px 15px' }}>{player.sekolah}</td>
+                  <td className='pr-10' style={{  textAlign: 'right', color: '#e67e22', fontWeight: 'bold' }}>
                     {player.skor}
                   </td>
                 </tr>
@@ -76,7 +78,7 @@ const App = () => {
         </div>
 
 
-        <div className='text-white font-bold' style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
+        <div className='text-black font-bold' style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
           <p style={{ textAlign: 'center', fontSize: '11px', marginTop: '10px' }}>
             Data otomatis diperbarui setiap 10 detik
           </p>
