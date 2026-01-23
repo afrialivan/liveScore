@@ -7,7 +7,7 @@ const App = () => {
   const [loading, setLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState(new Date());
 
-  const API_URL = "https://script.google.com/macros/s/AKfycbwGIGI9ULRgrOG8bkNSu_G_0o5Lco5oc_p_JmkGXHxC5G6y0gB_zsrdODE0Krgk-TGE/exec";
+  const API_URL = "https://script.google.com/macros/s/AKfycbzYoukgY9Fupwl85sT9bzNt1Tl5ruWA12kv4NnZqMqTyY70zTp5ILQWfKHGz20JE5Ip/exec";
 
   // Kita bungkus fungsi fetch dalam useCallback agar bisa dipanggil berulang kali
   const fetchLeaderboard = useCallback(async () => {
