@@ -16,7 +16,7 @@ const App = () => {
 
       if (json.data) {
         // Urutkan dari skor tertinggi
-        const sorted = json.data.sort((a, b) => b.skor - a.skor).slice(0, 60);
+        const sorted = json.data.sort((a, b) => b.skor - a.skor).slice(0, 10);
         setData(sorted);
         setLastUpdated(new Date());
       }
