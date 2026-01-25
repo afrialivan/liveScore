@@ -9,7 +9,6 @@ const App = () => {
 
   const API_URL = "https://script.google.com/macros/s/AKfycbzYoukgY9Fupwl85sT9bzNt1Tl5ruWA12kv4NnZqMqTyY70zTp5ILQWfKHGz20JE5Ip/exec";
 
-  // Kita bungkus fungsi fetch dalam useCallback agar bisa dipanggil berulang kali
   const fetchLeaderboard = useCallback(async () => {
     try {
       const response = await fetch(API_URL);
@@ -17,7 +16,7 @@ const App = () => {
 
       if (json.data) {
         // Urutkan dari skor tertinggi
-        const sorted = json.data.sort((a, b) => b.skor - a.skor).slice(0, 10);
+        const sorted = json.data.sort((a, b) => b.skor - a.skor).slice(0, 60);
         setData(sorted);
         setLastUpdated(new Date());
       }
@@ -29,16 +28,13 @@ const App = () => {
   }, [API_URL]);
 
   useEffect(() => {
-    // 1. Ambil data pertama kali saat load
     fetchLeaderboard();
 
-    // 2. Set interval untuk update setiap 10.000 ms (10 detik)
     const interval = setInterval(() => {
       fetchLeaderboard();
       console.log("Data diperbarui...");
     }, 10000);
 
-    // 3. Bersihkan interval saat komponen tidak lagi digunakan (unmount)
     return () => clearInterval(interval);
   }, [fetchLeaderboard]);
 
@@ -49,7 +45,7 @@ const App = () => {
       <div style={{ maxWidth: '900px', margin: '20px auto', fontFamily: 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif' }}>
         <img src={aset.bg} className='w-screen absolute -z-20 left-0 top-0' alt="" />
 
-        <div className='mt-32 text-center text-4xl font-bold text-red-400 mb-10'>Leaderboard MMC</div>
+        <div className='mt-32 text-center text-4xl font-bold text-red-400 mb-10'>Leaderboard Hari ke-2 MMC</div>
 
 
         <div className='' style={{ background: '#fff', borderRadius: '12px', boxShadow: '0 4px 15px rgba(0,0,0,0.1)', overflow: 'hidden' }}>
