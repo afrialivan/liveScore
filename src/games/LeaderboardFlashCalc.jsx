@@ -109,10 +109,10 @@ const LeaderboardFlashCalc = () => {
           <Link to="/" className="text-5xl font-black text-[#f97316] italic uppercase tracking-tighter leading-none mb-2">
             FLASH CALCULATOR
           </Link>
-          <p className="text-slate-500 text-[10px] font-black uppercase tracking-[0.5em] flex justify-center items-center gap-2">
+          {/* <p className="text-slate-500 text-[10px] font-black uppercase tracking-[0.5em] flex justify-center items-center gap-2">
             <span className="w-2 h-2 bg-green-500 rounded-full animate-ping"></span>
             LATEST ATTEMPT TRACKER • WITA ZONE
-          </p>
+          </p> */}
         </div>
 
         <div className="bg-[#0f172a] rounded-[2.5rem] border border-slate-800 shadow-2xl overflow-hidden backdrop-blur-md">
