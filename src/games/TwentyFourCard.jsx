@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/unsupported-syntax */
 import React, { useState, useEffect } from 'react';
 import { API_URL, SHEETS } from '../api/config';
@@ -11,15 +12,17 @@ const TwentyFourCard = () => {
   const [soalAngka, setSoalAngka] = useState([]); 
   const [fetching, setFetching] = useState(true);
 
-  const operators = ['+', '-', '*', '/'];
+  const mathOperators = ['+', '-', '*', '/'];
+  const brackets = ['(', ')'];
 
-  // 1. AMBIL DATA PESERTA & SOAL ANGKA
   useEffect(() => {
+    // Ambil daftar peserta
     fetch(`${API_URL}?name=${SHEETS.LEADERBOARD}`)
       .then(res => res.json())
       .then(json => { if (json.data) setListPeserta(json.data); })
       .catch(err => console.error("Gagal ambil peserta:", err));
 
+    // Ambil angka soal dari Sheets
     fetch(`${API_URL}?name=key-24-card`)
       .then(res => res.json())
       .then(json => {
@@ -36,19 +39,20 @@ const TwentyFourCard = () => {
   }, []);
 
   const handleInput = (val, type) => {
-    // Validasi Angka: Tidak boleh dobel
+    // Validasi Angka: Harus sesuai ketersediaan di soal
     if (type === 'num') {
       const countUsed = inputExp.filter(x => x.val === val && x.type === 'num').length;
       const countInSource = soalAngka.filter(x => x === val).length;
       if (countUsed >= countInSource) return;
     }
     
-    // Validasi Operator: Tidak boleh dobel (Aturan Baru)
+    // Validasi Operator (+ - * /): Tidak boleh dobel
     if (type === 'op') {
       const isOpUsed = inputExp.some(x => x.val === val && x.type === 'op');
       if (isOpUsed) return;
     }
 
+    // Tipe 'bracket' tidak memiliki validasi isUsed (boleh berkali-kali)
     setInputExp([...inputExp, { val, type }]);
   };
 
@@ -57,27 +61,33 @@ const TwentyFourCard = () => {
 
     let result = 0;
     try {
-      const expression = inputExp.map(x => x.val).join('');
-      result = eval(expression);
-    // eslint-disable-next-line no-unused-vars
+      // 1. Gabungkan input menjadi string
+      let rawExpression = inputExp.map(x => x.val).join('');
+
+      // 2. LOGIKA AUTO-MULTIPLICATION (Injeksi '*' otomatis)
+      // Pola: Angka( -> Angka*( | )Angka -> )*Angka | )( -> )*(
+      const formattedExpression = rawExpression
+        .replace(/(\d)\(/g, '$1*(')
+        .replace(/\)(\d)/g, ')*$1')
+        .replace(/\)\(/g, ')*(');
+
+      // 3. Hitung hasil
+      result = eval(formattedExpression);
+
+      if (result === undefined || isNaN(result)) throw new Error();
     } catch (e) {
-      return alert("Susunan operasi tidak valid!");
+      return alert("Susunan tidak valid! Periksa kembali letak angka dan tanda kurung Anda.");
     }
 
     const isCorrect = result === 24;
-
-    // 2. FEEDBACK INSTAN
     alert(isCorrect ? "TEPAT! Hasilnya 24." : `SALAH! Hasilnya: ${result}`);
 
     const waktuString = new Date().toLocaleTimeString('it-IT', {
       timeZone: 'Asia/Makassar',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
+      hour: '2-digit', minute: '2-digit', second: '2-digit',
       hour12: false
     });
 
-    // 3. KIRIM DATA DI BACKGROUND
     const payload = {
       action: 'insert',
       name: SHEETS?.TWENTY_FOUR,
@@ -100,74 +110,90 @@ const TwentyFourCard = () => {
 
   return (
     <div className="min-h-screen bg-[#020617] text-white font-sans flex items-center justify-center p-6 text-center">
-      <div className="w-full max-w-md bg-[#0f172a] rounded-[2.5rem] border border-slate-800 shadow-2xl p-8 relative">
+      <div className="w-full max-w-md bg-[#0f172a] rounded-[2.5rem] border border-slate-800 shadow-2xl p-8 relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-1.5 bg-[#f97316]"></div>
 
         <div className="mb-8">
           <Link to="/" className="text-2xl font-black text-[#f97316] italic tracking-tighter uppercase">24 Card</Link>
-          <p className="text-[10px] text-slate-500 font-bold uppercase tracking-[0.2em] mt-1">
-            {step === 1 ? "Select Player" : "No Double Operator Mode"}
+          <p className="text-[10px] text-slate-500 font-bold uppercase tracking-[0.2em] mt-1 italic">
+            {step === 1 ? "Select Participant" : "Implicit Multiplication Enabled"}
           </p>
         </div>
 
         {step === 1 && (
           <div className="space-y-6 animate-in fade-in">
-            <div className="max-h-60 overflow-y-auto space-y-2 pr-2 custom-scrollbar">
+            <div className="max-h-64 overflow-y-auto space-y-2 pr-2 custom-scrollbar text-left">
               {listPeserta.map((p, i) => (
                 <button key={i} onClick={() => setSelectedNama(p.nama)}
-                  className={`w-full p-4 rounded-2xl text-left border-2 transition-all ${selectedNama === p.nama ? 'border-[#f97316] bg-[#f97316]/10' : 'border-slate-800 bg-slate-900/50'}`}>
-                  <p className="font-black text-sm uppercase">{p.nama}</p>
+                  className={`w-full p-4 rounded-2xl border-2 transition-all ${selectedNama === p.nama ? 'border-[#f97316] bg-[#f97316]/10 shadow-lg shadow-orange-500/10' : 'border-slate-800 bg-slate-900/50'}`}>
+                  <p className="font-black text-sm uppercase tracking-tight">{p.nama}</p>
                 </button>
               ))}
             </div>
             <button disabled={!selectedNama || fetching} onClick={() => setStep(2)}
-              className={`w-full py-5 rounded-2xl font-black text-lg ${selectedNama && !fetching ? 'bg-[#f97316]' : 'bg-slate-800 text-slate-700'}`}>
-              {fetching ? "FETCHING..." : "START"}
+              className={`w-full py-5 rounded-2xl font-black text-lg transition-all ${selectedNama && !fetching ? 'bg-[#f97316]' : 'bg-slate-800 text-slate-700'}`}>
+              {fetching ? "LOADING DATA..." : "CONTINUE"}
             </button>
           </div>
         )}
 
         {step === 2 && (
           <div className="space-y-6 animate-in slide-in-from-right">
-            <div className="bg-slate-900 rounded-3xl p-6 border border-slate-800 min-h-25 flex flex-wrap items-center justify-center gap-2 shadow-inner font-mono text-3xl font-black">
-              {inputExp.length === 0 && <span className="text-slate-800 italic text-xl">0</span>}
+            {/* Expression Screen */}
+            <div className="bg-slate-950 rounded-3xl p-6 border border-slate-800 min-h-30 flex flex-wrap items-center justify-center gap-2 shadow-inner font-mono text-4xl font-black">
+              {inputExp.length === 0 && <span className="text-slate-800 italic text-xl tracking-widest">-- -- -- --</span>}
               {inputExp.map((item, i) => (
-                <span key={i} className={item.type === 'num' ? 'text-white' : 'text-[#f97316]'}>{item.val}</span>
+                <span key={i} className={item.type === 'num' ? 'text-white' : item.type === 'bracket' ? 'text-cyan-400' : 'text-[#f97316]'}>
+                  {item.val}
+                </span>
               ))}
             </div>
 
+            {/* Input Row: Numbers */}
             <div className="grid grid-cols-4 gap-3">
               {soalAngka.map((num, i) => {
-                const isUsed = inputExp.filter(x => x.val === num && x.type === 'num').length >= soalAngka.filter(x => x === num).length;
+                const countUsed = inputExp.filter(x => x.val === num && x.type === 'num').length;
+                const countInSource = soalAngka.filter(x => x === num).length;
+                const isUsed = countUsed >= countInSource;
                 return (
                   <button key={i} disabled={isUsed} onClick={() => handleInput(num, 'num')}
-                    className={`h-14 rounded-xl font-black text-xl border ${isUsed ? 'bg-slate-800 text-slate-900 border-transparent' : 'bg-slate-800 text-white border-slate-700 active:scale-95'}`}>
+                    className={`h-14 rounded-xl font-black text-xl border transition-all ${isUsed ? 'bg-slate-900 text-slate-950 border-transparent scale-95' : 'bg-slate-800 text-white border-slate-700 active:scale-90 hover:border-[#f97316]'}`}>
                     {num}
                   </button>
                 );
               })}
             </div>
 
-            <div className="grid grid-cols-4 gap-3">
-              {operators.map((op) => {
+            {/* Input Row: Operators & Brackets */}
+            <div className="grid grid-cols-3 gap-3">
+              {mathOperators.map((op) => {
                 const isOpUsed = inputExp.some(x => x.val === op && x.type === 'op');
                 return (
                   <button key={op} disabled={isOpUsed} onClick={() => handleInput(op, 'op')}
-                    className={`h-14 rounded-xl font-black text-2xl transition-all ${isOpUsed ? 'bg-slate-900 text-slate-950' : 'bg-[#0f172a] border border-[#f97316]/40 text-[#f97316] active:scale-95'}`}>
+                    className={`h-14 rounded-xl font-black text-2xl transition-all ${isOpUsed ? 'bg-slate-900 text-slate-950' : 'bg-[#0f172a] border border-[#f97316]/40 text-[#f97316] active:scale-90'}`}>
                     {op}
                   </button>
                 );
               })}
+              {brackets.map((br) => (
+                <button key={br} onClick={() => handleInput(br, 'bracket')}
+                  className="h-14 rounded-xl font-black text-2xl bg-slate-900 border border-cyan-500/30 text-cyan-400 active:scale-90">
+                  {br}
+                </button>
+              ))}
             </div>
 
-            <div className="flex gap-2">
-              <button onClick={() => setInputExp(inputExp.slice(0, -1))} className="flex-1 py-4 bg-slate-800 rounded-2xl font-black text-[10px] uppercase">Hapus</button>
-              <button onClick={() => setInputExp([])} className="flex-1 py-4 bg-slate-800 rounded-2xl font-black text-[10px] uppercase text-red-500">Reset</button>
+            {/* Control Bar */}
+            <div className="grid grid-cols-3 gap-3">
+              <button onClick={() => setStep(1)} className="py-4 bg-slate-900 border border-slate-800 rounded-xl font-black text-[10px] uppercase text-slate-500">BACK</button>
+              <button onClick={() => setInputExp(inputExp.slice(0, -1))} className="py-4 bg-slate-800 rounded-xl font-black text-[10px] uppercase text-slate-200">DELETE</button>
+              <button onClick={() => setInputExp([])} className="py-4 bg-red-900/10 border border-red-900/20 rounded-xl font-black text-[10px] uppercase text-red-500">CLEAR</button>
             </div>
 
+            {/* Final Action */}
             <button onClick={handleSubmit} disabled={inputExp.length === 0}
-              className={`w-full py-5 rounded-2xl font-black text-xl ${inputExp.length > 0 ? 'bg-[#f97316] shadow-xl' : 'bg-slate-800 text-slate-700'}`}>
-              SUBMIT
+              className={`w-full py-5 rounded-2xl font-black text-xl transition-all ${inputExp.length > 0 ? 'bg-[#f97316] shadow-xl shadow-orange-950/20' : 'bg-slate-800 text-slate-700'}`}>
+              VALIDATE & SUBMIT
             </button>
           </div>
         )}
