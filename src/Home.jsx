@@ -39,8 +39,8 @@ const Home = () => {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {gameList.map((game, i) => (
-              <div key={i} className="bg-[#0f172a] border border-slate-800 rounded-[2rem] p-6 hover:border-[#f97316]/50 transition-all group shadow-xl">
-                <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${game.color} to-black/20 flex items-center justify-center text-2xl mb-6 shadow-lg`}>
+              <div key={i} className="bg-[#0f172a] border border-slate-800 rounded-4xl p-6 hover:border-[#f97316]/50 transition-all group shadow-xl">
+                <div className={`w-14 h-14 rounded-2xl bg-linear-to-br ${game.color} to-black/20 flex items-center justify-center text-2xl mb-6 shadow-lg`}>
                   {game.icon}
                 </div>
                 <h3 className="text-2xl font-black uppercase italic tracking-tight mb-6">{game.title}</h3>
