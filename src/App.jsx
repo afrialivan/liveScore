@@ -1,91 +1,63 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import aset from "./assets/aset"
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Testing from './Testing';
+import ExApp from './ExApp';
+import Inputan from './Inputan';
+import TesInput from './TesInput';
+import LeaderboardFlashCard from './LeaderboardFlashCard';
+import ResistorRush from './games/ResistorRush';
+import FlashCalculator from './games/FlashCalculator';
+import HeavyRotation from './games/HeavyRotation';
+import TwentyFourCard from './games/TwentyFourCard';
+import Cryptarithm from './games/Cryptarithm';
+import LeaderboardResistor from './games/LeaderboardResistor';
+import LeaderboardFlashCalc from './games/LeaderboardFlashCalc';
+import LeaderboardHeavy from './games/LeaderboardHeavy';
+import LeaderboardTwenty from './games/LeaderboardTwenty';
+import LeaderboardCryptarithm from './games/LeaderboardCryptarithm';
+import Home from './Home';
+import LeaderboardPatternFrenzy from './games/LeaderboardPatternFrenzy';
+import LeaderboardDecodex from './games/LeaderboardDecodex';
+import LeaderboardPolyomino from './games/LeaderboardPolyomino';
+import LeaderboardQuiz from './games/LeaderboardQuiz';
+// import Decodex from './games/Decodex';
 
-const App = () => {
-
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [lastUpdated, setLastUpdated] = useState(new Date());
-
-  const API_URL = "https://script.google.com/macros/s/AKfycbzYoukgY9Fupwl85sT9bzNt1Tl5ruWA12kv4NnZqMqTyY70zTp5ILQWfKHGz20JE5Ip/exec";
-
-  const fetchLeaderboard = useCallback(async () => {
-    try {
-      const response = await fetch(API_URL);
-      const json = await response.json();
-
-      if (json.data) {
-        // Urutkan dari skor tertinggi
-        const sorted = json.data.sort((a, b) => b.skor - a.skor).slice(0, 10);
-        setData(sorted);
-        setLastUpdated(new Date());
-      }
-    } catch (err) {
-      console.error("Gagal update data:", err);
-    } finally {
-      setLoading(false);
-    }
-  }, [API_URL]);
-
-  useEffect(() => {
-    fetchLeaderboard();
-
-    const interval = setInterval(() => {
-      fetchLeaderboard();
-      console.log("Data diperbarui...");
-    }, 10000);
-
-    return () => clearInterval(interval);
-  }, [fetchLeaderboard]);
-
-  if (loading) return <div style={{ textAlign: 'center', padding: '20px' }}>Inisialisasi Data...</div>;
-
+function App() {
   return (
-    <div>
-      <div style={{ maxWidth: '900px', margin: '20px auto', fontFamily: 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif' }}>
-        <img src={aset.bg} className='w-screen absolute -z-20 left-0 top-0' alt="" />
+    <Router>
+      <div className="min-h-screen bg-gray-100">
+        <Routes>
+          {/* Halaman utama untuk peserta */}
+          <Route path="/" element={<Home />} />
+          
+          {/* Halaman dashboard untuk panitia */}
+          {/* <Route path="/admin" element={<ExApp />} /> */}
 
-        <div className='mt-32 text-center text-4xl font-bold text-red-400 mb-10'>Leaderboard Hari ke-2 MMC</div>
-
-
-        <div className='' style={{ background: '#fff', borderRadius: '12px', boxShadow: '0 4px 15px rgba(0,0,0,0.1)', overflow: 'hidden' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <thead style={{ background: '#f3f4f6' }}>
-              <tr>
-                <th className='w-32 text-center' style={{ padding: '15px', textAlign: 'left' }}>Peringkat</th>
-                <th className='w-52'style={{ padding: '15px', textAlign: 'left' }}>Nama</th>
-                <th className='w-32'style={{ padding: '15px', textAlign: 'left' }}>Sekolah</th>
-                <th className='w-32 pr-10'style={{ textAlign: 'right' }}>Skor</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.map((player, index) => (
-                <tr key={index} style={{ borderBottom: '1px solid #eee' }}>
-                  <td className='pl-10' style={{ fontWeight: 'bold' }}>{index + 1}</td>
-                  <td style={{ padding: '12px 15px' }}>{player.nama}</td>
-                  <td style={{ padding: '12px 15px' }}>{player.sekolah}</td>
-                  <td className='pr-10' style={{  textAlign: 'right', color: '#e67e22', fontWeight: 'bold' }}>
-                    {player.skor}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-
-        <div className='text-black font-bold' style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
-          <p style={{ textAlign: 'center', fontSize: '11px', marginTop: '10px' }}>
-            Data otomatis diperbarui setiap 10 detik
-          </p>
-          <span style={{ fontSize: '12px' }}>
-            Update terakhir: {lastUpdated.toLocaleTimeString()}
-          </span>
-        </div>
-
+          {/* <Route path="/tes" element={<TesInput />} />
+          <Route path="/input" element={<Inputan />} /> */}
+          {/* <Route path="/leaderboard-flash" element={<LeaderboardFlashCard />} /> */}
+          {/* <Route path="/flash-calculator" element={<FlashCalculator />} /> */}
+          <Route path="/flash-calculator" element={<FlashCalculator />} />
+          <Route path="/resistor" element={<ResistorRush />} />
+          <Route path="/heavy-rotation" element={<HeavyRotation />} />
+          <Route path="/twenty" element={<TwentyFourCard />} />
+          <Route path="/cryptarithm" element={<Cryptarithm />} />
+          <Route path="/leaderboard-resistor" element={<LeaderboardResistor />} />
+          <Route path="/leaderboard-flash" element={<LeaderboardFlashCalc />} />
+          <Route path="/leaderboard-heavy" element={<LeaderboardHeavy />} />
+          <Route path="/leaderboard-twenty" element={<LeaderboardTwenty />} />
+          <Route path="/leaderboard-cryptarithm" element={<LeaderboardCryptarithm />} />
+          <Route path="/leaderboard-pattern" element={<LeaderboardPatternFrenzy />} />
+          <Route path="/leaderboard-decodex" element={<LeaderboardDecodex />} />
+          <Route path="/leaderboard-polyomino" element={<LeaderboardPolyomino />} />
+          <Route path="/leaderboard-quiz" element={<LeaderboardQuiz />} />
+          {/* <Route path="/decodex" element={<Decodex />} /> */}
+          
+          {/* Opsional: Halaman 404 */}
+          <Route path="*" element={<div className="p-10 text-center">Halaman Tidak Ditemukan</div>} />
+        </Routes>
       </div>
-    </div>
+    </Router>
   );
-};
+}
 
 export default App;
