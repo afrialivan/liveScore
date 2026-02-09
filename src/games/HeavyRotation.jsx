@@ -14,12 +14,12 @@ const HeavyRotation = () => {
 
   // Daftar 6 Warna yang Tersedia
   const colorOptions = [
-    { name: 'Cokelat', hex: '#8B4513' },
-    { name: 'Merah', hex: '#FF0000' },
-    { name: 'Oranye', hex: '#FFA500' },
-    { name: 'Kuning', hex: '#FFFF00' },
-    { name: 'Hijau', hex: '#008000' },
     { name: 'Biru', hex: '#0000FF' },
+    { name: 'Oranye', hex: '#FFA500' },
+    { name: 'Hijau', hex: '#008000' },
+    { name: 'Kuning', hex: '#FFFF00' },
+    { name: 'Merah', hex: '#FF0000' },
+    { name: 'Ungu', hex: '#B17AEA' },
   ];
 
   // 1. AMBIL DATA PESERTA & KUNCI JAWABAN SAAT LOAD
