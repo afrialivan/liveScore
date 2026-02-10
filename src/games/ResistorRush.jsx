@@ -229,6 +229,9 @@ const ResistorRush = () => {
             </div>
 
             <div className="flex flex-col gap-3">
+              <button onClick={() => setInputBands([])} className="text-[20px] font-bold text-slate-500 uppercase tracking-widest hover:text-red-500">
+                Reset Colors
+              </button>
               <button
                 onClick={checkJawaban}
                 disabled={inputBands.length < 4}
@@ -236,9 +239,7 @@ const ResistorRush = () => {
               >
                 VERIFY COLORS
               </button>
-              <button onClick={() => setInputBands([])} className="text-[10px] font-bold text-slate-500 uppercase tracking-widest hover:text-red-500">
-                Reset Colors
-              </button>
+              
             </div>
           </>
         )}
