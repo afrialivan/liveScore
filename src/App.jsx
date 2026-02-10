@@ -21,6 +21,7 @@ import LeaderboardPolyomino from './games/LeaderboardPolyomino';
 import LeaderboardQuiz from './games/LeaderboardQuiz';
 import TimerControl from './TimerControl';
 import LeaderboardGrandTotal from './games/LeaderboardGrandTotal';
+import DelayPage from './games/DelayPage';
 // import Decodex from './games/Decodex';
 
 function App() {
@@ -39,6 +40,7 @@ function App() {
           {/* <Route path="/leaderboard-flash" element={<LeaderboardFlashCard />} /> */}
           {/* <Route path="/flash-calculator" element={<FlashCalculator />} /> */}
           <Route path="/flash-calculator" element={<FlashCalculator />} />
+          <Route path="/delay" element={<DelayPage />} />
           <Route path="/timer" element={<TimerControl />} />
           <Route path="/resistor" element={<ResistorRush />} />
           <Route path="/heavy-rotation" element={<HeavyRotation />} />
