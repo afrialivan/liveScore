@@ -5,11 +5,11 @@ import { API_URL, SHEETS } from '../api/config';
 import { Link } from 'react-router-dom';
 
 const TwentyFourCard = () => {
-  const [step, setStep] = useState(1); 
+  const [step, setStep] = useState(1);
   const [selectedNama, setSelectedNama] = useState('');
-  const [inputExp, setInputExp] = useState([]); 
+  const [inputExp, setInputExp] = useState([]);
   const [listPeserta, setListPeserta] = useState([]);
-  const [soalAngka, setSoalAngka] = useState([]); 
+  const [soalAngka, setSoalAngka] = useState([]);
   const [fetching, setFetching] = useState(true);
 
   const mathOperators = ['+', '-', '*', '/'];
@@ -29,7 +29,7 @@ const TwentyFourCard = () => {
         if (json.data && json.data.length > 0) {
           const data = json.data[0];
           setSoalAngka([
-            parseInt(data.n1), parseInt(data.n2), 
+            parseInt(data.n1), parseInt(data.n2),
             parseInt(data.n3), parseInt(data.n4)
           ]);
         }
@@ -38,6 +38,19 @@ const TwentyFourCard = () => {
       .finally(() => setFetching(false));
   }, []);
 
+  const playSound = (isCorrect) => {
+    // Path langsung mengarah ke folder public
+    const audio = new Audio(isCorrect ? '/sounds/benar.m4a' : '/sounds/salah.m4a');
+
+    // Kecilkan sedikit volumenya agar tidak mengagetkan peserta (0.0 - 1.0)
+    audio.volume = 1.0;
+
+    audio.play().catch(err => {
+      // Browser biasanya memblokir suara jika belum ada interaksi user
+      console.warn("Suara diblokir browser atau file tidak ditemukan:", err);
+    });
+  };
+
   const handleInput = (val, type) => {
     // Validasi Angka: Harus sesuai ketersediaan di soal
     if (type === 'num') {
@@ -45,7 +58,7 @@ const TwentyFourCard = () => {
       const countInSource = soalAngka.filter(x => x === val).length;
       if (countUsed >= countInSource) return;
     }
-    
+
     // Validasi Operator (+ - * /): Tidak boleh dobel
     if (type === 'op') {
       const isOpUsed = inputExp.some(x => x.val === val && x.type === 'op');
@@ -80,7 +93,9 @@ const TwentyFourCard = () => {
     }
 
     const isCorrect = result === 24;
-    alert(isCorrect ? "TEPAT! Hasilnya 24." : `SALAH! Hasilnya: ${result}`);
+
+    playSound(isCorrect);
+    // alert(isCorrect ? "TEPAT! Hasilnya 24." : `SALAH! Hasilnya: ${result}`);
 
     const waktuString = new Date().toLocaleTimeString('it-IT', {
       timeZone: 'Asia/Makassar',

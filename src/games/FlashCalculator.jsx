@@ -7,7 +7,7 @@ const FlashCalculator = () => {
   const [selectedNama, setSelectedNama] = useState('');
   const [jawabanInput, setJawabanInput] = useState('');
   const [loadingPeserta, setLoadingPeserta] = useState(true);
-  
+
   const [listPeserta, setListPeserta] = useState([]);
   const [kunciJawaban, setKunciJawaban] = useState("");
 
@@ -37,24 +37,39 @@ const FlashCalculator = () => {
     else if (jawabanInput.length < 8) setJawabanInput(prev => prev + val);
   };
 
+  const playSound = (isCorrect) => {
+    // Path langsung mengarah ke folder public
+    const audio = new Audio(isCorrect ? '/sounds/benar.m4a' : '/sounds/salah.m4a');
+
+    // Kecilkan sedikit volumenya agar tidak mengagetkan peserta (0.0 - 1.0)
+    audio.volume = 1.0;
+
+    audio.play().catch(err => {
+      // Browser biasanya memblokir suara jika belum ada interaksi user
+      console.warn("Suara diblokir browser atau file tidak ditemukan:", err);
+    });
+  };
+
   const handleValidasi = () => {
     if (!jawabanInput) return alert("Masukkan jawaban!");
 
     // Logika Penentuan Status
     const isCorrect = jawabanInput === kunciJawaban;
     const selisih = Math.abs(parseInt(jawabanInput) - parseInt(kunciJawaban));
-    const TOLERANSI = 10; 
+    const TOLERANSI = 10;
 
-    let statusKirim = "SALAH";
+    // let statusKirim = "SALAH";
     let poin = 0;
 
     if (isCorrect) {
-      statusKirim = "BENAR";
+      // statusKirim = "BENAR";
       poin = 100;
     } else if (selisih <= TOLERANSI) {
-      statusKirim = "MENDEKATI";
-      poin = 0; 
+      // statusKirim = "MENDEKATI";
+      poin = 0;
     }
+
+    playSound(isCorrect);
 
     // 2. FORMAT WAKTU SEBAGAI STRING MURNI (WITA)
     const waktuString = new Date().toLocaleTimeString('it-IT', {
@@ -65,14 +80,14 @@ const FlashCalculator = () => {
       hour12: false
     });
 
-    alert(isCorrect ? "LUAR BIASA! Jawaban Benar." : `Tercatat! Jawaban: ${jawabanInput} (${statusKirim})`);
-    
+    // alert(isCorrect ? "LUAR BIASA! Jawaban Benar." : `Tercatat! Jawaban: ${jawabanInput} (${statusKirim})`);
+
     const payload = {
       action: 'insert',
       name: SHEETS?.FLASH_CALC,
       nama: selectedNama,
-      jawaban: jawabanInput, 
-      poin: poin.toString(), 
+      jawaban: jawabanInput,
+      poin: poin.toString(),
       waktu: `'${waktuString}`,   // Tambahkan apostrof di depan agar Google Sheets simpan sebagai string
       result: jawabanInput, // Angka asli yang diinput user
     };
@@ -93,7 +108,7 @@ const FlashCalculator = () => {
   return (
     <div className="min-h-screen bg-[#020617] text-white font-sans flex items-center justify-center p-6">
       <div className="w-full max-w-md bg-[#0f172a] rounded-[2.5rem] border border-slate-800 shadow-2xl p-8 relative overflow-hidden text-center">
-        
+
         <div className="absolute top-0 left-0 w-full h-1.5 bg-[#f97316]"></div>
 
         <div className="mb-8">
@@ -112,9 +127,8 @@ const FlashCalculator = () => {
               ) : (
                 listPeserta.map((p, i) => (
                   <button key={i} onClick={() => setSelectedNama(p.nama)}
-                    className={`w-full p-4 rounded-2xl text-left border-2 transition-all ${
-                      selectedNama === p.nama ? 'border-[#f97316] bg-[#f97316]/10' : 'border-slate-800 bg-slate-900/50'
-                    }`}
+                    className={`w-full p-4 rounded-2xl text-left border-2 transition-all ${selectedNama === p.nama ? 'border-[#f97316] bg-[#f97316]/10' : 'border-slate-800 bg-slate-900/50'
+                      }`}
                   >
                     <p className="font-black text-sm uppercase">{p.nama}</p>
                     <p className="text-[9px] text-slate-500 font-bold uppercase">{p.sekolah || "PESERTA"}</p>
@@ -126,9 +140,8 @@ const FlashCalculator = () => {
             <button
               disabled={!selectedNama || !kunciJawaban}
               onClick={() => setStep(2)}
-              className={`w-full py-5 rounded-2xl font-black text-lg tracking-widest transition-all ${
-                selectedNama && kunciJawaban ? 'bg-[#f97316] hover:bg-[#ea580c] shadow-xl' : 'bg-slate-800 text-slate-700 cursor-not-allowed'
-              }`}
+              className={`w-full py-5 rounded-2xl font-black text-lg tracking-widest transition-all ${selectedNama && kunciJawaban ? 'bg-[#f97316] hover:bg-[#ea580c] shadow-xl' : 'bg-slate-800 text-slate-700 cursor-not-allowed'
+                }`}
             >
               {!kunciJawaban && selectedNama ? "WAITING FOR KEY..." : "NEXT"}
             </button>

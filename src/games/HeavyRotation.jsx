@@ -5,9 +5,9 @@ import { Link } from 'react-router-dom';
 const HeavyRotation = () => {
   const [step, setStep] = useState(1); // 1: Pilih Nama, 2: Pilih Warna, 3: Keypad Nilai
   const [selectedNama, setSelectedNama] = useState('');
-  const [selectedColor, setSelectedColor] = useState(null); 
+  const [selectedColor, setSelectedColor] = useState(null);
   const [jawabanInput, setJawabanInput] = useState('');
-  
+
   const [listPeserta, setListPeserta] = useState([]);
   const [kunciData, setKunciData] = useState({ warna: "", nilai: "" });
   const [fetching, setFetching] = useState(true);
@@ -52,6 +52,19 @@ const HeavyRotation = () => {
     else if (jawabanInput.length < 6) setJawabanInput(prev => prev + val);
   };
 
+  const playSound = (isCorrect) => {
+    // Path langsung mengarah ke folder public
+    const audio = new Audio(isCorrect ? '/sounds/benar.m4a' : '/sounds/salah.m4a');
+
+    // Kecilkan sedikit volumenya agar tidak mengagetkan peserta (0.0 - 1.0)
+    audio.volume = 1.0;
+
+    audio.play().catch(err => {
+      // Browser biasanya memblokir suara jika belum ada interaksi user
+      console.warn("Suara diblokir browser atau file tidak ditemukan:", err);
+    });
+  };
+
   const handleValidasiFinal = () => {
     if (!jawabanInput) return alert("Masukkan nilai!");
 
@@ -59,12 +72,13 @@ const HeavyRotation = () => {
     const nilaiBenar = jawabanInput === kunciData.nilai;
     const isCorrect = warnaBenar && nilaiBenar;
 
-    // 2. OPTIMASI: FEEDBACK INSTAN (TANPA TUNGGU FETCH)
-    if (isCorrect) {
-      alert("BERHASIL! Warna dan Nilai Tepat.");
-    } else {
-      alert(`GAGAL! \nWarna: ${warnaBenar ? '✅' : '❌'} \nNilai: ${nilaiBenar ? '✅' : '❌'}`);
-    }
+    // if (isCorrect) {
+    //   alert("BERHASIL! Warna dan Nilai Tepat.");
+    // } else {
+    //   alert(`GAGAL! \nWarna: ${warnaBenar ? '✅' : '❌'} \nNilai: ${nilaiBenar ? '✅' : '❌'}`);
+    // }
+
+    playSound(isCorrect);
 
     const waktuString = new Date().toLocaleTimeString('it-IT', {
       timeZone: 'Asia/Makassar',
@@ -79,7 +93,7 @@ const HeavyRotation = () => {
       action: 'insert',
       name: SHEETS?.HEAVY_ROTATION,
       nama: selectedNama,
-      poin: isCorrect ? "100" : "0", 
+      poin: isCorrect ? "100" : "0",
       waktu: `'${waktuString}`,
     };
 
@@ -134,8 +148,8 @@ const HeavyRotation = () => {
           <div className="space-y-6 animate-in fade-in duration-300">
             <div className="grid grid-cols-2 gap-4">
               {colorOptions.map((c) => (
-                <button 
-                  key={c.name} 
+                <button
+                  key={c.name}
                   onClick={() => setSelectedColor(c.name.toLowerCase())}
                   className={`flex flex-col items-center p-4 rounded-3xl border-2 transition-all active:scale-95 ${selectedColor === c.name.toLowerCase() ? 'border-white bg-white/10 shadow-lg' : 'border-slate-800 bg-slate-900'}`}
                 >
@@ -154,7 +168,7 @@ const HeavyRotation = () => {
         {/* STEP 3: KEYPAD NILAI */}
         {step === 3 && (
           <div className="space-y-6 animate-in slide-in-from-right duration-300">
-             <div className="bg-slate-900 rounded-3xl p-6 border border-slate-800 text-center shadow-inner">
+            <div className="bg-slate-900 rounded-3xl p-6 border border-slate-800 text-center shadow-inner">
               <p className="text-[9px] font-bold text-slate-600 uppercase mb-2">Color Picked: <span className="text-[#f97316]">{selectedColor?.toUpperCase()}</span></p>
               <div className="text-5xl font-black text-white font-mono tracking-tighter h-12 flex items-center justify-center">
                 {jawabanInput || <span className="text-slate-800">000</span>}

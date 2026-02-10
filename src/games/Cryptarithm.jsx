@@ -3,17 +3,17 @@ import { API_URL, SHEETS } from '../api/config';
 import { Link } from 'react-router-dom';
 
 const Cryptarithm = () => {
-  const [step, setStep] = useState(1); 
+  const [step, setStep] = useState(1);
   const [selectedNama, setSelectedNama] = useState('');
   const [kodeSoal, setKodeSoal] = useState('');
   const [jawabanInput, setJawabanInput] = useState('');
-  
+
   // State untuk data yang hanya diambil sekali di awal
   const [listPeserta, setListPeserta] = useState([]);
-  const [daftarSoal, setDaftarSoal] = useState([]); 
-  
+  const [daftarSoal, setDaftarSoal] = useState([]);
+
   // State untuk data yang perlu sinkronisasi (soal yang sudah terjawab)
-  const [soalTerpakai, setSoalTerpakai] = useState([]); 
+  const [soalTerpakai, setSoalTerpakai] = useState([]);
   const [fetching, setFetching] = useState(true);
 
   // 1. PENGAMBILAN DATA AWAL (HANYA SEKALI SAAT LOAD)
@@ -31,7 +31,7 @@ const Cryptarithm = () => {
 
         if (jsonPeserta.data) setListPeserta(jsonPeserta.data);
         if (jsonKunci.data) setDaftarSoal(jsonKunci.data);
-        
+
         // Setelah data statis beres, ambil data dinamis (soal terpakai)
         await syncSoalTerpakai();
       } catch (err) {
@@ -49,10 +49,10 @@ const Cryptarithm = () => {
     try {
       const resPost = await fetch(`${API_URL}?name=${SHEETS.CRYPTARITHM}`);
       const jsonPost = await resPost.json();
-      
+
       if (jsonPost.data) {
         const usedCodes = jsonPost.data
-          .filter(item => parseInt(item.poin) > 0) 
+          .filter(item => parseInt(item.poin) > 0)
           .map(item => item.kode?.toUpperCase());
         setSoalTerpakai(usedCodes);
       }
@@ -67,6 +67,19 @@ const Cryptarithm = () => {
     else if (jawabanInput.length < 8) setJawabanInput(prev => prev + val);
   };
 
+  const playSound = (isCorrect) => {
+    // Path langsung mengarah ke folder public
+    const audio = new Audio(isCorrect ? '/sounds/benar.m4a' : '/sounds/salah.m4a');
+
+    // Kecilkan sedikit volumenya agar tidak mengagetkan peserta (0.0 - 1.0)
+    audio.volume = 1.0;
+
+    audio.play().catch(err => {
+      // Browser biasanya memblokir suara jika belum ada interaksi user
+      console.warn("Suara diblokir browser atau file tidak ditemukan:", err);
+    });
+  };
+
   const handleValidasi = () => {
     if (!jawabanInput) return alert("Masukkan jawaban!");
 
@@ -74,7 +87,9 @@ const Cryptarithm = () => {
     const isCorrect = jawabanInput === dataSoal?.kunci?.toString();
     const poinDinamis = isCorrect ? (dataSoal?.poin || 100) : 0;
 
-    alert(isCorrect ? `BENAR! +${poinDinamis} Poin.` : "SALAH! Coba lagi.");
+    playSound(isCorrect);
+
+    // alert(isCorrect ? `BENAR! +${poinDinamis} Poin.` : "SALAH! Coba lagi.");
 
     const waktuString = new Date().toLocaleTimeString('it-IT', {
       timeZone: 'Asia/Makassar',

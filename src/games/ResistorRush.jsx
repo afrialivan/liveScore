@@ -68,6 +68,19 @@ const ResistorRush = () => {
     if (inputBands.length < 4) setInputBands([...inputBands, colorName.toLowerCase()]);
   };
 
+  const playSound = (isCorrect) => {
+    // Path langsung mengarah ke folder public
+    const audio = new Audio(isCorrect ? '/sounds/benar.m4a' : '/sounds/salah.m4a');
+
+    // Kecilkan sedikit volumenya agar tidak mengagetkan peserta (0.0 - 1.0)
+    audio.volume = 1.0;
+
+    audio.play().catch(err => {
+      // Browser biasanya memblokir suara jika belum ada interaksi user
+      console.warn("Suara diblokir browser atau file tidak ditemukan:", err);
+    });
+  };
+
   const checkJawaban = () => {
     const kunciSekarang = kunciJawaban[currentNo];
     const jawabanBenar = JSON.stringify(inputBands) === JSON.stringify(kunciSekarang);
@@ -81,9 +94,11 @@ const ResistorRush = () => {
         setCurrentNo(prev => prev + 1);
         setInputBands([]);
       } else {
+        playSound(true);
         handleFinish("MISI SELESAI");
       }
     } else {
+      playSound(false);
       handleFinish(`SALAH PADA KARTU #${currentNo}`);
     }
   };
@@ -92,7 +107,7 @@ const ResistorRush = () => {
     clearInterval(timerRef.current);
     const finalScore = score + (reason.includes("SELESAI") ? 4 : 0);
 
-    alert(`${reason}!\nSkor Akhir: ${finalScore}`);
+    // alert(`${reason}!\nSkor Akhir: ${finalScore}`);
 
     const waktuString = new Date().toLocaleTimeString('it-IT', {
       timeZone: 'Asia/Makassar',
