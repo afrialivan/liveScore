@@ -19,6 +19,8 @@ import LeaderboardPatternFrenzy from './games/LeaderboardPatternFrenzy';
 import LeaderboardDecodex from './games/LeaderboardDecodex';
 import LeaderboardPolyomino from './games/LeaderboardPolyomino';
 import LeaderboardQuiz from './games/LeaderboardQuiz';
+import TimerControl from './TimerControl';
+import LeaderboardGrandTotal from './games/LeaderboardGrandTotal';
 // import Decodex from './games/Decodex';
 
 function App() {
@@ -37,9 +39,11 @@ function App() {
           {/* <Route path="/leaderboard-flash" element={<LeaderboardFlashCard />} /> */}
           {/* <Route path="/flash-calculator" element={<FlashCalculator />} /> */}
           <Route path="/flash-calculator" element={<FlashCalculator />} />
+          <Route path="/timer" element={<TimerControl />} />
           <Route path="/resistor" element={<ResistorRush />} />
           <Route path="/heavy-rotation" element={<HeavyRotation />} />
           <Route path="/twenty" element={<TwentyFourCard />} />
+          <Route path="/total" element={<LeaderboardGrandTotal />} />
           <Route path="/cryptarithm" element={<Cryptarithm />} />
           <Route path="/leaderboard-resistor" element={<LeaderboardResistor />} />
           <Route path="/leaderboard-flash" element={<LeaderboardFlashCalc />} />

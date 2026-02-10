@@ -15,7 +15,7 @@ const LeaderboardPolyomino = () => {
   
         if (json.data) {
           // Urutkan dari skor tertinggi
-          const sorted = json.data.sort((a, b) => b.Poin - a.Poin).slice(0, 10);
+          const sorted = json.data.sort((a, b) => b.poin - a.poin).slice(0, 10);
           setData(sorted);
           setLastUpdated(new Date());
         }
@@ -76,7 +76,7 @@ const LeaderboardPolyomino = () => {
                     </div>
                   </td>
                   <td className="py-6 px-4">
-                    <p className="font-black text-sm uppercase tracking-tight">{item.Nama}</p>
+                    <p className="font-black text-sm uppercase tracking-tight">{item.nama}</p>
                   </td>
                   <td className="py-6 px-4">
                     <p className="text-xs font-bold text-slate-400 uppercase tracking-tighter">
@@ -85,7 +85,7 @@ const LeaderboardPolyomino = () => {
                   </td>
                   <td className="py-6 px-10 text-right">
                     <span className="text-5xl font-black italic text-white tracking-tighter">
-                      {item.Poin}
+                      {item.poin}
                     </span>
                   </td>
                 </tr>

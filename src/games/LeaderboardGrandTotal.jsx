@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { API_URL, SHEETS } from '../api/config';
 import { Link } from 'react-router-dom';
 
-const LeaderboardQuiz = () => {
+const LeaderboardGrandTotal = () => {
   const [data, setData] = useState([]);
     // const [loading, setLoading] = useState(true);
     const [lastUpdated, setLastUpdated] = useState(new Date());
@@ -10,7 +10,7 @@ const LeaderboardQuiz = () => {
   
     const fetchLeaderboard = useCallback(async () => {
       try {
-        const response = await fetch(`${API_URL}?name=${SHEETS.QUIZ}`);
+        const response = await fetch(`${API_URL}?name=${SHEETS.LEADERBOARD}`);
         const json = await response.json();
   
         if (json.data) {
@@ -38,7 +38,6 @@ const LeaderboardQuiz = () => {
       return () => clearInterval(interval);
     }, [fetchLeaderboard]);
   
-    // if (loading) return <div style={{ textAlign: 'center', padding: '20px' }}>Inisialisasi Data...</div>;
 
   return (
     <div className="min-h-screen bg-[#020617] text-white p-6 md:p-12 font-sans relative">
@@ -47,7 +46,7 @@ const LeaderboardQuiz = () => {
         {/* Header Section */}
         <div className="text-center mb-12">
           <Link to="/" className="text-6xl font-black text-[#f97316] italic uppercase tracking-tighter leading-none mb-3">
-            QUIZ
+            GRAND TOTAL
           </Link>
           {/* <p className="text-slate-500 text-[10px] font-black uppercase tracking-[0.5em] flex justify-center items-center gap-2">
             <span className="w-2 h-2 bg-green-500 rounded-full animate-ping"></span>
@@ -80,7 +79,7 @@ const LeaderboardQuiz = () => {
                   </td>
                   <td className="py-6 px-4">
                     <p className="text-xs font-bold text-slate-400 uppercase tracking-tighter">
-                      {item.Institusi}
+                      {item.sekolah}
                     </p>
                   </td>
                   <td className="py-6 px-10 text-right">
@@ -114,4 +113,4 @@ const LeaderboardQuiz = () => {
   );
 };
 
-export default LeaderboardQuiz;
+export default LeaderboardGrandTotal;

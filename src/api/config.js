@@ -10,6 +10,7 @@ export const API_URL = "https://script.google.com/macros/s/AKfycbxQ0Gak9VWrIaugi
  */
 export const SHEETS = {
   LEADERBOARD: "leaderboard",
+  // LEADERBOARD_GRANDTOTAL: "grand-leaderboard",
   FLASH_CALC: "flash-calculator",
   RESISTOR_RUSH: "resistor-rush",
   KEY_FLASH_CALC: "key-flash-calculator",
