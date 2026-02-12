@@ -93,7 +93,7 @@ const HeavyRotation = () => {
       action: 'insert',
       name: SHEETS?.HEAVY_ROTATION,
       nama: selectedNama,
-      poin: isCorrect ? "100" : "0",
+      poin: isCorrect ? "50" : "0",
       waktu: `'${waktuString}`,
     };
 
